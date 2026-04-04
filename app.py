@@ -58,6 +58,10 @@ def refresh():
     fetch_all_updates()
     process_updates()
     return jsonify({"status": "success", "message": "Updates refreshed!"})
+    
+if not scheduler.running:
+    scheduler.add_job(scheduled_job, 'interval', hours=24)
+    scheduler.start()
 
 # ─── API: Get Digest ──────────────────────────────────────────────────────────
 @app.route("/api/digest")
