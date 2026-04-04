@@ -14,8 +14,9 @@ def scheduled_job():
     fetch_all_updates()
     process_updates()
 
-scheduler.add_job(scheduled_job, 'interval', hours=24)
-scheduler.start()
+if not scheduler.running:
+    scheduler.add_job(scheduled_job, 'interval', hours=24)
+    scheduler.start()
 
 # ─── Home Dashboard ───────────────────────────────────────────────────────────
 @app.route("/")
