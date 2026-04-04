@@ -4,7 +4,8 @@ import os
 from scraper import load_updates, save_updates
 
 # ─── Your Claude API Key ──────────────────────────────────────────────────────
-CLAUDE_API_KEY = "YOUR_API_KEY_HERE"
+import os
+CLAUDE_API_KEY = os.environ.get("CLAUDE_API_KEY", "YOUR_API_KEY_HERE")
 
 # ─── Claude Client ────────────────────────────────────────────────────────────
 client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
