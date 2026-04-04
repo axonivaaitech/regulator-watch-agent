@@ -18,7 +18,8 @@ def scheduled_job():
 if not scheduler.running:
     scheduler.add_job(scheduled_job, 'interval', hours=24)
     scheduler.start()
-
+    fetch_all_updates()
+    process_updates()
 atexit.register(lambda: scheduler.shutdown(wait=False))
 
 # ─── Home Dashboard ───────────────────────────────────────────────────────────
