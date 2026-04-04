@@ -3,6 +3,7 @@ from scraper import fetch_all_updates, load_updates
 from ai_agent import process_updates, generate_digest
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
+import atexit
 
 app = Flask(__name__)
 
@@ -18,6 +19,8 @@ if not scheduler.running:
     scheduler.add_job(scheduled_job, 'interval', hours=24)
     scheduler.start()
 
+atexit.register(lambda: scheduler.shutdown(wait=False))
+
 # ─── Home Dashboard ───────────────────────────────────────────────────────────
 @app.route("/")
 def index():
@@ -28,14 +31,11 @@ def index():
 def get_updates():
     regulator = request.args.get("regulator", "ALL")
     impact = request.args.get("impact", "ALL")
-
     updates = load_updates()
-
     if regulator != "ALL":
         updates = [u for u in updates if u.get("regulator") == regulator]
     if impact != "ALL":
         updates = [u for u in updates if u.get("impact") == impact]
-
     return jsonify(updates)
 
 # ─── API: Get Stats ───────────────────────────────────────────────────────────
@@ -44,12 +44,12 @@ def get_stats():
     updates = load_updates()
     stats = {
         "total": len(updates),
-        "rbi": len([u for u in updates if u.get("regulator") == "RBI"]),
-        "sebi": len([u for u in updates if u.get("regulator") == "SEBI"]),
+        "rbi":   len([u for u in updates if u.get("regulator") == "RBI"]),
+        "sebi":  len([u for u in updates if u.get("regulator") == "SEBI"]),
         "irdai": len([u for u in updates if u.get("regulator") == "IRDAI"]),
-        "high": len([u for u in updates if u.get("impact") == "High"]),
-        "medium": len([u for u in updates if u.get("impact") == "Medium"]),
-        "low": len([u for u in updates if u.get("impact") == "Low"]),
+        "high":  len([u for u in updates if u.get("impact") == "High"]),
+        "medium":len([u for u in updates if u.get("impact") == "Medium"]),
+        "low":   len([u for u in updates if u.get("impact") == "Low"]),
     }
     return jsonify(stats)
 
@@ -59,10 +59,6 @@ def refresh():
     fetch_all_updates()
     process_updates()
     return jsonify({"status": "success", "message": "Updates refreshed!"})
-    
-if not scheduler.running:
-    scheduler.add_job(scheduled_job, 'interval', hours=24)
-    scheduler.start()
 
 # ─── API: Get Digest ──────────────────────────────────────────────────────────
 @app.route("/api/digest")
