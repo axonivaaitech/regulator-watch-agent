@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulatory Watch Agent | Axoniva AI Tech</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #0d1b2a, #1a2a4a);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: #00d4ff;
+            letter-spacing: 1px;
+        }
+
+        .header-left p {
+            font-size: 12px;
+            color: #8899aa;
+            margin-top: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .live-badge {
+            background: #00ff8840;
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000;
+        }
+
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,212,255,0.4); }
+
+        .btn-digest {
+            background: linear-gradient(135deg, #ff6b35, #cc4400);
+            color: #fff;
+        }
+
+        .btn-digest:hover { transform: translateY(-1px); }
+
+        /* ── Stats Row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+            padding: 24px 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #0d1b2a, #1a2a3a);
+            border: 1px solid #1e3a5a;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover { border-color: #00d4ff; transform: translateY(-2px); }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #8899aa;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card.rbi .stat-number { color: #ff6b35; }
+        .stat-card.sebi .stat-number { color: #00d4ff; }
+        .stat-card.irdai .stat-number { color: #a855f7; }
+        .stat-card.high .stat-number { color: #ff4444; }
+        .stat-card.medium .stat-number { color: #ffaa00; }
+        .stat-card.low .stat-number { color: #00ff88; }
+
+        /* ── Filters ── */
+        .filters {
+            padding: 0 40px 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            color: #8899aa;
+            font-weight: 600;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid #1e3a5a;
+            background: transparent;
+            color: #8899aa;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #00d4ff20;
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .filter-btn.rbi.active { background: #ff6b3520; border-color: #ff6b35; color: #ff6b35; }
+        .filter-btn.sebi.active { background: #00d4ff20; border-color: #00d4ff; color: #00d4ff; }
+        .filter-btn.irdai.active { background: #a855f720; border-color: #a855f7; color: #a855f7; }
+        .filter-btn.high.active { background: #ff444420; border-color: #ff4444; color: #ff4444; }
+        .filter-btn.medium.active { background: #ffaa0020; border-color: #ffaa00; color: #ffaa00; }
+        .filter-btn.low.active { background: #00ff8820; border-color: #00ff88; color: #00ff88; }
+
+        /* ── Updates Grid ── */
+        .updates-container {
+            padding: 0 40px 40px;
+        }
+
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .update-card {
+            background: linear-gradient(135deg, #0d1b2a, #1a2a3a);
+            border: 1px solid #1e3a5a;
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .update-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.15);
+        }
+
+        .update-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+        }
+
+        .update-card.High::before { background: #ff4444; }
+        .update-card.Medium::before { background: #ffaa00; }
+        .update-card.Low::before { background: #00ff88; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .regulator-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .badge-RBI { background: #ff6b3520; color: #ff6b35; border: 1px solid #ff6b35; }
+        .badge-SEBI { background: #00d4ff20; color: #00d4ff; border: 1px solid #00d4ff; }
+        .badge-IRDAI { background: #a855f720; color: #a855f7; border: 1px solid #a855f7; }
+
+        .impact-badge {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .impact-High { background: #ff444430; color: #ff4444; }
+        .impact-Medium { background: #ffaa0030; color: #ffaa00; }
+        .impact-Low { background: #00ff8830; color: #00ff88; }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e6f0;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .card-summary {
+            font-size: 13px;
+            color: #8899aa;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .card-action {
+            background: #00d4ff10;
+            border: 1px solid #00d4ff30;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #00d4ff;
+            margin-bottom: 12px;
+        }
+
+        .card-action span { font-weight: bold; }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .card-area {
+            font-size: 11px;
+            color: #556677;
+            background: #1e3a5a40;
+            padding: 3px 10px;
+            border-radius: 8px;
+        }
+
+        .card-date {
+            font-size: 11px;
+            color: #556677;
+        }
+
+        .card-link {
+            color: #00d4ff;
+            font-size: 12px;
+            text-decoration: none;
+            padding: 4px 10px;
+            border: 1px solid #00d4ff40;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .card-link:hover {
+            background: #00d4ff20;
+        }
+
+        /* ── Loading & Empty ── */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #8899aa;
+            font-size: 16px;
+        }
+
+        .loading::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #1e3a5a;
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Digest Modal ── */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show { display: flex; }
+
+        .modal-content {
+            background: #0d1b2a;
+            border: 1px solid #00d4ff;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            color: #00d4ff;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8899aa;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .digest-text {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #c0ccd8;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #334455;
+            font-size: 12px;
+            border-top: 1px solid #1e3a5a;
+        }
+
+        .footer span { color: #00d4ff; }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <h1>⚡ Regulatory Watch Agent</h1>
+        <p>Real-time RBI • SEBI • IRDAI Monitoring | Powered by Axoniva AI Tech</p>
+    </div>
+    <div class="header-right">
+        <div class="live-badge">🟢 LIVE</div>
+        <button class="btn btn-digest" onclick="showDigest()">📧 Daily Digest</button>
+        <button class="btn btn-primary" onclick="refreshUpdates()">🔄 Refresh</button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-number" id="stat-total">-</div>
+        <div class="stat-label">Total Updates</div>
+    </div>
+    <div class="stat-card rbi">
+        <div class="stat-number" id="stat-rbi">-</div>
+        <div class="stat-label">RBI</div>
+    </div>
+    <div class="stat-card sebi">
+        <div class="stat-number" id="stat-sebi">-</div>
+        <div class="stat-label">SEBI</div>
+    </div>
+    <div class="stat-card irdai">
+        <div class="stat-number" id="stat-irdai">-</div>
+        <div class="stat-label">IRDAI</div>
+    </div>
+    <div class="stat-card high">
+        <div class="stat-number" id="stat-high">-</div>
+        <div class="stat-label">🔴 High Impact</div>
+    </div>
+    <div class="stat-card medium">
+        <div class="stat-number" id="stat-medium">-</div>
+        <div class="stat-label">🟡 Medium</div>
+    </div>
+    <div class="stat-card low">
+        <div class="stat-number" id="stat-low">-</div>
+        <div class="stat-label">🟢 Low</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filters">
+    <span class="filter-label">Regulator:</span>
+    <button class="filter-btn active" onclick="setFilter('regulator','ALL',this)">All</button>
+    <button class="filter-btn rbi" onclick="setFilter('regulator','RBI',this)">RBI</button>
+    <button class="filter-btn sebi" onclick="setFilter('regulator','SEBI',this)">SEBI</button>
+    <button class="filter-btn irdai" onclick="setFilter('regulator','IRDAI',this)">IRDAI</button>
+    &nbsp;&nbsp;
+    <span class="filter-label">Impact:</span>
+    <button class="filter-btn active" onclick="setFilter('impact','ALL',this)">All</button>
+    <button class="filter-btn high" onclick="setFilter('impact','High',this)">🔴 High</button>
+    <button class="filter-btn medium" onclick="setFilter('impact','Medium',this)">🟡 Medium</button>
+    <button class="filter-btn low" onclick="setFilter('impact','Low',this)">🟢 Low</button>
+</div>
+
+<!-- Updates Grid -->
+<div class="updates-container">
+    <div id="updates-grid" class="updates-grid">
+        <div class="loading">Loading regulatory updates...</div>
+    </div>
+</div>
+
+<!-- Digest Modal -->
+<div class="modal" id="digestModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">📋 Daily Regulatory Digest</div>
+            <button class="modal-close" onclick="closeDigest()">×</button>
+        </div>
+        <div class="digest-text" id="digestText">Generating digest...</div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    Regulatory Watch Agent | Built by <span>Soorej SR</span> | Powered by <span>Axoniva AI Tech</span> &
+    <span>Claude AI</span>
+</div>
+
+<script>
+    // ── State ──────────────────────────────────────────────────────────────────
+    let activeRegulator = 'ALL';
+    let activeImpact = 'ALL';
+
+    // ── Load Stats ─────────────────────────────────────────────────────────────
+    async function loadStats() {
+        const res = await fetch('/api/stats');
+        const stats = await res.json();
+        document.getElementById('stat-total').textContent = stats.total;
+        document.getElementById('stat-rbi').textContent = stats.rbi;
+        document.getElementById('stat-sebi').textContent = stats.sebi;
+        document.getElementById('stat-irdai').textContent = stats.irdai;
+        document.getElementById('stat-high').textContent = stats.high;
+        document.getElementById('stat-medium').textContent = stats.medium;
+        document.getElementById('stat-low').textContent = stats.low;
+    }
+
+    // ── Load Updates ───────────────────────────────────────────────────────────
+    async function loadUpdates() {
+        document.getElementById('updates-grid').innerHTML = '<div class="loading">Loading updates...</div>';
+        const res = await fetch(`/api/updates?regulator=${activeRegulator}&impact=${activeImpact}`);
+        const updates = await res.json();
+        renderUpdates(updates);
+    }
+
+    // ── Render Cards ───────────────────────────────────────────────────────────
+    function renderUpdates(updates) {
+        const grid = document.getElementById('updates-grid');
+        if (!updates.length) {
+            grid.innerHTML = '<div class="loading">No updates found for selected filters.</div>';
+            return;
+        }
+
+        grid.innerHTML = updates.map(u => `
+            <div class="update-card ${u.impact || 'Medium'}">
+                <div class="card-header">
+                    <span class="regulator-badge badge-${u.regulator}">${u.regulator}</span>
+                    <span class="impact-badge impact-${u.impact || 'Medium'}">${u.impact || 'Medium'} Impact</span>
+                </div>
+                <div class="card-title">${u.title}</div>
+                ${u.summary ? `<div class="card-summary">${u.summary}</div>` : ''}
+                ${u.action ? `<div class="card-action"><span>✅ Action:</span> ${u.action}</div>` : ''}
+                <div class="card-footer">
+                    <span class="card-area">📌 ${u.area || 'General Banking'}</span>
+                    <span class="card-date">📅 ${u.date || 'Today'}</span>
+                    <a href="${u.url}" target="_blank" class="card-link">View →</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ── Filter Handler ─────────────────────────────────────────────────────────
+    function setFilter(type, value, btn) {
+        if (type === 'regulator') {
+            activeRegulator = value;
+            document.querySelectorAll('.filter-btn.rbi, .filter-btn.sebi, .filter-btn.irdai, .filters .filter-btn:first-of-type')
+                .forEach(b => b.classList.remove('active'));
+        } else {
+            activeImpact = value;
+        }
+        btn.classList.add('active');
+        loadUpdates();
+    }
+
+    // ── Refresh ────────────────────────────────────────────────────────────────
+    async function refreshUpdates() {
+        const btn = document.querySelector('.btn-primary');
+        btn.textContent = '⏳ Refreshing...';
+        btn.disabled = true;
+        await fetch('/api/refresh', { method: 'POST' });
+        await loadStats();
+        await loadUpdates();
+        btn.textContent = '🔄 Refresh';
+        btn.disabled = false;
+    }
+
+    // ── Digest ─────────────────────────────────────────────────────────────────
+    async function showDigest() {
+        document.getElementById('digestModal').classList.add('show');
+        document.getElementById('digestText').textContent = 'Generating AI digest...';
+        const res = await fetch('/api/digest');
+        const data = await res.json();
+        document.getElementById('digestText').textContent = data.digest;
+    }
+
+    function closeDigest() {
+        document.getElementById('digestModal').classList.remove('show');
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    loadStats();
+    loadUpdates();
+</script>
+</body>
+</html>
