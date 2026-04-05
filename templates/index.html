@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regulatory Watch Agent | Axoniva AI Tech</title>
+    <title>Regulatory Watch Agent | Infosys Banking</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -287,9 +287,7 @@
             transition: all 0.2s;
         }
 
-        .card-link:hover {
-            background: #00d4ff20;
-        }
+        .card-link:hover { background: #00d4ff20; }
 
         /* ── Loading & Empty ── */
         .loading {
@@ -368,13 +366,50 @@
         /* ── Footer ── */
         .footer {
             text-align: center;
-            padding: 20px;
-            color: #334455;
-            font-size: 12px;
+            padding: 18px 20px;
             border-top: 1px solid #1e3a5a;
+            background: linear-gradient(135deg, #0d1b2a, #1a2a4a);
         }
 
-        .footer span { color: #00d4ff; }
+        .footer-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 12.5px;
+            color: #8899aa;
+        }
+
+        .footer-divider {
+            color: #1e3a5a;
+            font-size: 16px;
+        }
+
+        .footer-name {
+            color: #00d4ff;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .footer-emp {
+            color: #556677;
+            font-size: 11.5px;
+            background: #1e3a5a40;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .footer-claude {
+            font-weight: 700;
+            background: linear-gradient(135deg, #cc785c, #e8a87c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-infosys {
+            color: #667788;
+        }
     </style>
 </head>
 <body>
@@ -383,7 +418,7 @@
 <div class="header">
     <div class="header-left">
         <h1>⚡ Regulatory Watch Agent</h1>
-        <p>Real-time RBI • SEBI • IRDAI Monitoring | Powered by Axoniva AI Tech</p>
+        <p>Real-time RBI • SEBI • IRDAI Monitoring | Infosys Banking FinCrime Delivery Unit</p>
     </div>
     <div class="header-right">
         <div class="live-badge">🟢 LIVE</div>
@@ -459,8 +494,16 @@
 
 <!-- Footer -->
 <div class="footer">
-    Regulatory Watch Agent | Built by <span>Soorej SR</span> | Powered by <span>Axoniva AI Tech</span> &
-    <span>Claude AI</span>
+    <div class="footer-inner">
+        <span>🏗️ Built by</span>
+        <span class="footer-name">Soorej Ramesan</span>
+        <span class="footer-emp">Emp No: 1150493</span>
+        <span class="footer-divider">|</span>
+        <span>⚡ Powered by</span>
+        <span class="footer-claude">Anthropic Claude AI</span>
+        <span class="footer-divider">|</span>
+        <span class="footer-infosys">🏦 Infosys Banking FinCrime Delivery Unit</span>
+    </div>
 </div>
 
 <script>
