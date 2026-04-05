@@ -6,7 +6,7 @@ from scraper import load_updates, save_updates
 import os
 
 def get_client():
-    api_key = os.environ.get("CLAUDE_API_KEY", "YOUR_API_KEY_HERE")
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
     return anthropic.Anthropic(api_key=api_key)
 
 # ─── Classify Impact Level ────────────────────────────────────────────────────
