@@ -16,7 +16,7 @@ def load_updates():
 
 # ─── Save updates ─────────────────────────────────────────────────────────────
 def save_updates(updates):
-    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)  # ← ADD THIS LINE
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     with open(DATA_FILE, "w") as f:
         json.dump(updates, f, indent=2)
 
@@ -30,7 +30,6 @@ def scrape_rbi():
         response = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(response.content, "html.parser")
 
-        # Find press release links
         links = soup.find_all("a", href=True)
         count = 0
         for link in links:
@@ -49,10 +48,14 @@ def scrape_rbi():
                     "area": "Banking"
                 })
                 count += 1
+
+        if len(results) == 0:
+            print("⚠️ RBI: No results from live site, using sample data")
+            results = get_sample_rbi_data()
+
         print(f"✅ RBI: Found {len(results)} updates")
     except Exception as e:
         print(f"❌ RBI scraping error: {e}")
-        # Add sample data if scraping fails
         results = get_sample_rbi_data()
     return results
 
@@ -85,6 +88,11 @@ def scrape_sebi():
                     "area": "Securities"
                 })
                 count += 1
+
+        if len(results) == 0:
+            print("⚠️ SEBI: No results from live site, using sample data")
+            results = get_sample_sebi_data()
+
         print(f"✅ SEBI: Found {len(results)} updates")
     except Exception as e:
         print(f"❌ SEBI scraping error: {e}")
@@ -119,13 +127,18 @@ def scrape_irdai():
                     "area": "Insurance"
                 })
                 count += 1
+
+        if len(results) == 0:
+            print("⚠️ IRDAI: No results from live site, using sample data")
+            results = get_sample_irdai_data()
+
         print(f"✅ IRDAI: Found {len(results)} updates")
     except Exception as e:
         print(f"❌ IRDAI scraping error: {e}")
         results = get_sample_irdai_data()
     return results
 
-# ─── Sample Data (fallback if websites block scraping) ────────────────────────
+# ─── Sample Data (fallback) ───────────────────────────────────────────────────
 def get_sample_rbi_data():
     return [
         {
@@ -217,21 +230,19 @@ def fetch_all_updates():
     existing = load_updates()
     existing_ids = {u["id"] for u in existing}
 
-    # Scrape all regulators
     rbi_updates = scrape_rbi()
     sebi_updates = scrape_sebi()
     irdai_updates = scrape_irdai()
 
     all_fetched = rbi_updates + sebi_updates + irdai_updates
 
-    # Only add new ones
     for update in all_fetched:
         if update["id"] not in existing_ids:
             all_new.append(update)
 
     if all_new:
         combined = all_new + existing
-        save_updates(combined[:50])  # Keep latest 50
+        save_updates(combined[:50])
         print(f"\n✅ {len(all_new)} new updates saved!")
     else:
         print("\n✅ No new updates found.")
