@@ -3,12 +3,11 @@ import json
 import os
 from scraper import load_updates, save_updates
 
-# ─── Your Claude API Key ──────────────────────────────────────────────────────
 import os
-CLAUDE_API_KEY = os.environ.get("CLAUDE_API_KEY", "YOUR_API_KEY_HERE")
 
-# ─── Claude Client ────────────────────────────────────────────────────────────
-client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+def get_client():
+    api_key = os.environ.get("CLAUDE_API_KEY", "YOUR_API_KEY_HERE")
+    return anthropic.Anthropic(api_key=api_key)
 
 # ─── Classify Impact Level ────────────────────────────────────────────────────
 def classify_impact(title, summary):
@@ -72,7 +71,7 @@ ACTION REQUIRED:
 [1 specific action compliance teams must take]
 
 URGENCY: [High / Medium / Low]"""
-
+        client = get_client()
         message = client.messages.create(
             model="claude-opus-4-5",
             max_tokens=300,
@@ -185,7 +184,7 @@ Include:
 2. Key highlights (high impact items)
 3. Recommended immediate actions
 4. Sign off as: Regulatory Watch Agent | Powered by Axoniva AI Tech"""
-
+        client = get_client()
         message = client.messages.create(
             model="claude-opus-4-5",
             max_tokens=400,
