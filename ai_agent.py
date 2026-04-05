@@ -183,7 +183,7 @@ Include:
 1. Overall summary of today's updates
 2. Key highlights (high impact items)
 3. Recommended immediate actions
-4. Sign off as: Regulatory Watch Agent | Powered by Axoniva AI Tech"""
+4. Sign off as: Regulatory Watch Agent | Built by Soorej Ramesan (Emp No: 1150493) &nbsp;|&nbsp; Powered by Anthropic Claude AI"""
         client = get_client()
         message = client.messages.create(
             model="claude-opus-4-5",
