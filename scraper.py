@@ -16,6 +16,7 @@ def load_updates():
 
 # ─── Save updates ─────────────────────────────────────────────────────────────
 def save_updates(updates):
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)  # ← ADD THIS LINE
     with open(DATA_FILE, "w") as f:
         json.dump(updates, f, indent=2)
 
