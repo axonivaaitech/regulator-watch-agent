@@ -35,8 +35,8 @@ def get_updates():
     updates = load_updates()
     if regulator != "ALL":
         updates = [u for u in updates if u.get("regulator") == regulator]
-    if impact != "ALL":
-        updates = [u for u in updates if u.get("impact") == impact]
+   if impact != "ALL":
+    updates = [u for u in updates if u.get("impact", "").upper() == impact.upper()]
     return jsonify(updates)
 
 # ─── API: Get Stats ───────────────────────────────────────────────────────────
